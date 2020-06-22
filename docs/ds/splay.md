@@ -14,7 +14,7 @@
 
 首先肯定是一棵二叉树！
 
-能够在这棵树上查找某个值的性质：左儿子的值 $<$ 根节点的值 $<$ 右儿子的值。
+能够在这棵树上查找某个值的性质：左子树任意节点的值 $<$ 根节点的值 $<$ 右子树任意节点的值。
 
 ### 节点维护信息
 
@@ -178,7 +178,10 @@ int kth(int k) {
       cnr = ch[cnr][0];
     } else {
       k -= cnt[cnr] + sz[ch[cnr][0]];
-      if (k <= 0) return val[cnr];
+      if (k <= 0) {
+        splay(cnr);
+        return val[cnr];
+      }
       cnr = ch[cnr][1];
     }
   }
@@ -193,6 +196,7 @@ int kth(int k) {
 int pre() {
   int cnr = ch[rt][0];
   while (ch[cnr][1]) cnr = ch[cnr][1];
+  splay(cnr);
   return cnr;
 }
 ```
@@ -205,21 +209,26 @@ int pre() {
 int nxt() {
   int cnr = ch[rt][1];
   while (ch[cnr][0]) cnr = ch[cnr][0];
+  splay(cnr);
   return cnr;
 }
 ```
+
+### 合并两棵树
+
+合并两棵 Splay 树，设两棵树的根节点分别为 $x$ 和 $y$ ，那么我们要求 $x$ 树中的最大值小于 $y$ 树中的最小值。删除操作如下：
+
+-   如果 $x$ 和 $y$ 其中之一或两者都为空树，直接返回不为空的那一棵树的根节点或空树。
+-   否则将 $x$ 树中的最大值 $\operatorname{Splay}$ 到根，然后把它的右子树设置为 $y$ 并更新节点的信息，然后返回这个节点。
 
 ### 删除操作
 
 删除操作也是一个比较复杂的操作，具体步骤如下：
 
--   首先将 $x$ 旋转到根的位置。
--   接下来分为多个情况考虑：
+首先将 $x$ 旋转到根的位置。
 
-1.  如果有不止一个 $x$ ，那么将 $cnt[x]$ 减 $1$ 并退出。
-2.  如果 $x$ 没有儿子节点，那么直接将当前节点 $\text{clear}$ 并退出。
-3.  如果 $x$ 只有一个儿子，那么先将当前节点 $\text{clear}$ 再把唯一的儿子作为根节点。
-4.  否则将 $x$ 的前驱旋转到根并作为根节点，将 $x$ 的右子树接到根节点的右子树上，最后要将根的信息更新。
+-   如果 $cnt[x]>1$ （有不止一个 $x$ ），那么将 $cnt[x]$ 减 $1$ 并退出。
+-   否则，合并它的左右两棵子树即可。
 
 ```cpp
 void del(int k) {
@@ -248,7 +257,7 @@ void del(int k) {
     clear(cnr);
     return;
   }
-  int x = pre(), cnr = rt;
+  int cnr = rt, x = pre();
   splay(x);
   fa[ch[cnr][1]] = x;
   ch[x][1] = ch[cnr][1];
@@ -341,7 +350,10 @@ struct Splay {
         cnr = ch[cnr][0];
       } else {
         k -= cnt[cnr] + sz[ch[cnr][0]];
-        if (k <= 0) return val[cnr];
+        if (k <= 0) {
+          splay(cnr);
+          return val[cnr];
+        }
         cnr = ch[cnr][1];
       }
     }
@@ -349,11 +361,13 @@ struct Splay {
   int pre() {
     int cnr = ch[rt][0];
     while (ch[cnr][1]) cnr = ch[cnr][1];
+    splay(cnr);
     return cnr;
   }
   int nxt() {
     int cnr = ch[rt][1];
     while (ch[cnr][0]) cnr = ch[cnr][0];
+    splay(cnr);
     return cnr;
   }
   void del(int k) {
@@ -382,7 +396,8 @@ struct Splay {
       clear(cnr);
       return;
     }
-    int x = pre(), cnr = rt;
+    int cnr = rt;
+    int x = pre();
     splay(x);
     fa[ch[cnr][1]] = x;
     ch[x][1] = ch[cnr][1];
@@ -418,21 +433,21 @@ int main() {
 
 以下题目都是裸的 $\text{Splay}$ 维护二叉查找树。~~（直接套板子即可）~~
 
--   [【模板】普通平衡树](https://loj.ac/problem/104)
--   [【模板】文艺平衡树](https://loj.ac/problem/105)
--   [\[HNOI2002\]营业额统计](https://www.lydsy.com/JudgeOnline/problem.php?id=1588)
--   [\[HNOI2004\]宠物收养所](https://www.lydsy.com/JudgeOnline/problem.php?id=1208)
+-    [【模板】普通平衡树](https://loj.ac/problem/104) 
+-    [【模板】文艺平衡树](https://loj.ac/problem/105) 
+-    [「HNOI2002」营业额统计](https://loj.ac/problem/10143) 
+-    [「HNOI2004」宠物收养所](https://loj.ac/problem/10144) 
 
 ## 练习题
 
-[luogu P4402\[Cerc2007\]robotic sort 机械排序](https://www.luogu.org/problemnew/show/P4402)/[bzoj 1552（权限题）](https://www.lydsy.com/JudgeOnline/problem.php?id=1552)
+ [「Cerc2007」robotic sort 机械排序](https://www.luogu.com.cn/problem/P4402) 
 
-[二逼平衡树（树套树）](https://loj.ac/problem/106)
+ [二逼平衡树（树套树）](https://loj.ac/problem/106) 
 
-[bzoj 2827 千山鸟飞绝](https://www.lydsy.com/JudgeOnline/problem.php?id=2827)
+ [bzoj 2827 千山鸟飞绝](http://www.lydsy.com/JudgeOnline/problem.php?id=2827) 
 
-[bzoj 4923\[Lydsy1706 月赛\]K 小值查询](https://www.lydsy.com/JudgeOnline/problem.php?id=4923)
+ [「Lydsy1706 月赛」K 小值查询](http://www.lydsy.com/JudgeOnline/problem.php?id=4923) 
 
 * * *
 
-> 本文部分内容引用于[algocode 算法博客](https://algocode.net)，特别鸣谢！
+> 本文部分内容引用于 [algocode 算法博客](https://algocode.net) ，特别鸣谢！

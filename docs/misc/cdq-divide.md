@@ -76,11 +76,13 @@ _所以刚才的算法流程中的递归部分我们就是通过 $solve(l,mid),s
 
 还记得你把所有的 $i$ 和 $j$ 都事先按照 $a$ 值排好序了吗？我们以双指针的方式在树状数组里插入点，这样的话我们就只需要做 $O(n)$ 次插入操作啦~
 
-所以通过这样一个算法流程我们就用 $O(nlogn)$ 的时间处理完了关于第 $2$ 类点对的信息了
+所以通过这样一个算法流程我们就用 $O(n\log n)$ 的时间处理完了关于第 $2$ 类点对的信息了
 
-这样的话我们的算法复杂度就是 $T(n)=T(\lfloor \frac{n}{2} \rfloor)+T(\lceil \frac{n}{2} \rceil)+O(nlogn)=O(nlog^2n)$ 了
+这样的话我们的算法复杂度就是 $T(n)=T(\lfloor \frac{n}{2} \rfloor)+T(\lceil \frac{n}{2} \rceil)+O(n\log n)=O(n\log^2n)$ 了
 
 ### 例题[CQOI2011]动态逆序对
+
+ [题目链接](https://www.luogu.com.cn/problem/P3157) 
 
 仔细推一下就是和三维偏序差不多的式子了，基本就是一个三维偏序的板子
 
@@ -196,7 +198,7 @@ int main() {
 
 ## CDQ 分治优化 1D/1D 动态规划的转移
 
-所谓 1D/1D 动态规划就是说我们的 dp 数组是 1 维的，转移是 $O(n)$ 的一类 dp 问题，如果条件良好的话我们有些时候可以通过 cdq 分治来把这类问题的时间复杂度由 $O(n^2)$ 降至 $O(nlog^2n)$ 
+所谓 1D/1D 动态规划就是说我们的 dp 数组是 1 维的，转移是 $O(n)$ 的一类 dp 问题，如果条件良好的话我们有些时候可以通过 cdq 分治来把这类问题的时间复杂度由 $O(n^2)$ 降至 $O(n\log^2n)$ 
 
 那么比如说我们要优化这样的一个 $dp$ 式子给你一个序列每个元素有两个属性 $a,b$ 我们希望计算一个 dp 式子的值，它的转移方程如下：
 
@@ -246,7 +248,7 @@ _如果你足够熟练的话可以看出这就是一个二维最长上升子序�
 
 又比如说 $5$ 这个点它的 dp 值就是在 $solve(1,4)$ 函数中解决的，更新它的区间是 $(1,4)$ 
 
-仔细观察就会发现一个 i 点的 dp 值被更新了 $log$ 次，而且，更新它的区间刚好是 $(1,i)$ 在线段树上被拆分出来的 log 个区间
+仔细观察就会发现一个 i 点的 dp 值被更新了 log 次，而且，更新它的区间刚好是 $(1,i)$ 在线段树上被拆分出来的 log 个区间
 
 因此我们的第 2 个条件就满足了，我们的确保证了所有合法的 $j$ 都去更新过点 $i$ 
 
@@ -390,13 +392,13 @@ int main()
 
 这个问题就等价于平面上有静态的一堆矩形接下来不停的询问一个矩形区域的和了
 
-那么我们可以套一个扫描线在 $O(nlogn)$ 的时间内处理好所有跨越 $mid$ 的修改 - 询问关系
+那么我们可以套一个扫描线在 $O(n\log n)$ 的时间内处理好所有跨越 $mid$ 的修改 - 询问关系
 
 剩下的事情就是递归的分治左右两侧修改 - 询问关系来解决这个问题了
 
-这样实现的 cdq 分治的话你会发现同一个询问被处理了 $O(logn)$ 次来回答，不过没有关系因为每次贡献这个询问的修改是互不相交的
+这样实现的 cdq 分治的话你会发现同一个询问被处理了 $O(\log n)$ 次来回答，不过没有关系因为每次贡献这个询问的修改是互不相交的
 
-时间复杂度为 $T(n)=T(\lfloor \frac{n}{2} \rfloor)+T(\lceil \frac{n}{2} \rceil)+ O(nlogn)=O(nlog^2n)$ 
+时间复杂度为 $T(n)=T(\lfloor \frac{n}{2} \rfloor)+T(\lceil \frac{n}{2} \rceil)+ O(n\log n)=O(n\log^2n)$ 
 
 观察上述的算法流程，我们发现一开始我们只能解决静态的矩形加矩形求和问题，但是只是简单的套了一个 cdq 分治上去我们就可以离线的解决一个动态的矩形加矩形求和问题了。
 
@@ -414,120 +416,217 @@ int main()
 
  $pre$ 数组的具体变化可以使用 $std::set$ 来进行处理（这个用 set 维护连续的区间的技巧也被称之为_old driver tree_)
 
-```C
-#include<cstdio>
-#include<algorithm>
-#include<set>
-#include<map> 
-#define SNI set <nod> :: iterator 
-#define SDI set <data> :: iterator 
-using namespace std;const int N=1e5+10;int n;int m;int pre[N];int npre[N];int a[N];int tp[N];int lf[N];int rt[N];int co[N];
-struct modi{int t;int pos;int pre;int va;friend bool operator <(modi a,modi b){return a.pre<b.pre;}}md[10*N];int tp1;
-struct qry{int t;int l;int r;int ans;friend bool operator <(qry a,qry b){return a.l<b.l;}}qr[N];int tp2;int cnt;
-inline bool cmp(const qry& a,const qry& b){return a.t<b.t;}
-inline void modify(int pos,int co)//修改函数
+```cpp
+#include <algorithm>
+#include <cstdio>
+#include <map>
+#include <set>
+#define SNI set<nod>::iterator
+#define SDI set<data>::iterator
+using namespace std;
+const int N = 1e5 + 10;
+int n;
+int m;
+int pre[N];
+int npre[N];
+int a[N];
+int tp[N];
+int lf[N];
+int rt[N];
+int co[N];
+struct modi {
+  int t;
+  int pos;
+  int pre;
+  int va;
+  friend bool operator<(modi a, modi b) { return a.pre < b.pre; }
+} md[10 * N];
+int tp1;
+struct qry {
+  int t;
+  int l;
+  int r;
+  int ans;
+  friend bool operator<(qry a, qry b) { return a.l < b.l; }
+} qr[N];
+int tp2;
+int cnt;
+inline bool cmp(const qry& a, const qry& b) { return a.t < b.t; }
+inline void modify(int pos, int co)  // 修改函数
 {
-    if(npre[pos]==co)return;md[++tp1]=(modi){++cnt,pos,npre[pos],-1};
-    md[++tp1]=(modi){++cnt,pos,npre[pos]=co,1};
+  if (npre[pos] == co) return;
+  md[++tp1] = (modi){++cnt, pos, npre[pos], -1};
+  md[++tp1] = (modi){++cnt, pos, npre[pos] = co, 1};
 }
-namespace prew
+namespace prew {
+int lst[2 * N];
+map<int, int> mp;  // 提前离散化
+inline void prew() {
+  scanf("%d%d", &n, &m);
+  for (int i = 1; i <= n; i++) scanf("%d", &a[i]), mp[a[i]] = 1;
+  for (int i = 1; i <= m; i++) {
+    scanf("%d%d%d", &tp[i], &lf[i], &rt[i]);
+    if (tp[i] == 1) scanf("%d", &co[i]), mp[co[i]] = 1;
+  }
+  map<int, int>::iterator it, it1;
+  for (it = mp.begin(), it1 = it, ++it1; it1 != mp.end(); ++it, ++it1)
+    it1->second += it->second;
+  for (int i = 1; i <= n; i++) a[i] = mp[a[i]];
+  for (int i = 1; i <= n; i++)
+    if (tp[i] == 1) co[i] = mp[co[i]];
+  for (int i = 1; i <= n; i++) pre[i] = lst[a[i]], lst[a[i]] = i;
+  for (int i = 1; i <= n; i++) npre[i] = pre[i];
+}
+}  // namespace prew
+namespace colist {
+struct data {
+  int l;
+  int r;
+  int x;
+  friend bool operator<(data a, data b) { return a.r < b.r; }
+};
+set<data> s;
+struct nod {
+  int l;
+  int r;
+  friend bool operator<(nod a, nod b) { return a.r < b.r; }
+};
+set<nod> c[2 * N];
+set<int> bd;
+inline void split(int mid) {  // 将一个节点拆成两个节点
+  SDI it = s.lower_bound((data){0, mid, 0});
+  data p = *it;
+  if (mid == p.r) return;
+  s.erase(p);
+  s.insert((data){p.l, mid, p.x});
+  s.insert((data){mid + 1, p.r, p.x});
+  c[p.x].erase((nod){p.l, p.r});
+  c[p.x].insert((nod){p.l, mid});
+  c[p.x].insert((nod){mid + 1, p.r});
+}
+inline void del(set<data>::iterator it) {  // 删除一个迭代器
+  bd.insert(it->l);
+  SNI it1, it2;
+  it1 = it2 = c[it->x].find((nod){it->l, it->r});
+  ++it2;
+  if (it2 != c[it->x].end()) bd.insert(it2->l);
+  c[it->x].erase(it1);
+  s.erase(it);
+}
+inline void ins(data p) {  // 插入一个节点
+  s.insert(p);
+  SNI it = c[p.x].insert((nod){p.l, p.r}).first;
+  ++it;
+  if (it != c[p.x].end()) {
+    bd.insert(it->l);
+  }
+}
+inline void stv(int l, int r, int x) {  // 区间赋值
+  if (l != 1) split(l - 1);
+  split(r);
+  int p = l;  // split两下之后删掉所有区间
+  while (p != r + 1) {
+    SDI it = s.lower_bound((data){0, p, 0});
+    p = it->r + 1;
+    del(it);
+  }
+  ins((data){l, r, x});  // 扫一遍set处理所有变化的pre值
+  for (set<int>::iterator it = bd.begin(); it != bd.end(); ++it) {
+    SDI it1 = s.lower_bound((data){0, *it, 0});
+    if (*it != it1->l)
+      modify(*it, *it - 1);
+    else {
+      SNI it2 = c[it1->x].lower_bound((nod){0, *it});
+      if (it2 != c[it1->x].begin())
+        --it2, modify(*it, it2->r);
+      else
+        modify(*it, 0);
+    }
+  }
+  bd.clear();
+}
+inline void ih() {
+  int nc = a[1];
+  int ccnt = 1;  // 将连续的一段插入到set中
+  for (int i = 2; i <= n; i++)
+    if (nc != a[i]) {
+      s.insert((data){i - ccnt, i - 1, nc}),
+          c[nc].insert((nod){i - ccnt, i - 1});
+      nc = a[i];
+      ccnt = 1;
+    } else {
+      ccnt++;
+    }
+  s.insert((data){n - ccnt + 1, n, a[n]}),
+      c[a[n]].insert((nod){n - ccnt + 1, n});
+}
+}  // namespace colist
+namespace cdq {
+struct treearray  // 树状数组
 {
-    int lst[2*N];map <int,int> mp;//提前离散化
-    inline void prew()
-    {
-        scanf("%d%d",&n,&m);for(int i=1;i<=n;i++)scanf("%d",&a[i]),mp[a[i]]=1;
-        for(int i=1;i<=m;i++){scanf("%d%d%d",&tp[i],&lf[i],&rt[i]);if(tp[i]==1)scanf("%d",&co[i]),mp[co[i]]=1;}
-        map <int,int> :: iterator it,it1;
-        for(it=mp.begin(),it1=it,++it1;it1!=mp.end();++it,++it1)it1->second+=it->second;
-        for(int i=1;i<=n;i++)a[i]=mp[a[i]];for(int i=1;i<=n;i++)if(tp[i]==1)co[i]=mp[co[i]];
-        for(int i=1;i<=n;i++)pre[i]=lst[a[i]],lst[a[i]]=i;for(int i=1;i<=n;i++)npre[i]=pre[i];
+  int ta[N];
+  inline void c(int x, int t) {
+    for (; x <= n; x += x & (-x)) ta[x] += t;
+  }
+  inline void d(int x) {
+    for (; x <= n; x += x & (-x)) ta[x] = 0;
+  }
+  inline int q(int x) {
+    int r = 0;
+    for (; x; x -= x & (-x)) r += ta[x];
+    return r;
+  }
+  inline void clear() {
+    for (int i = 1; i <= n; i++) ta[i] = 0;
+  }
+} ta;
+int srt[N];
+inline bool cmp1(const int& a, const int& b) { return pre[a] < pre[b]; }
+inline void solve(int l1, int r1, int l2, int r2, int L, int R) {  // cdq
+  if (l1 == r1 || l2 == r2) return;
+  int mid = (L + R) / 2;
+  int mid1 = l1;
+  while (mid1 != r1 && md[mid1 + 1].t <= mid) mid1++;
+  int mid2 = l2;
+  while (mid2 != r2 && qr[mid2 + 1].t <= mid) mid2++;
+  solve(l1, mid1, l2, mid2, L, mid);
+  solve(mid1, r1, mid2, r2, mid, R);
+  if (l1 != mid1 && mid2 != r2) {
+    sort(md + l1 + 1, md + mid1 + 1);
+    sort(qr + mid2 + 1, qr + r2 + 1);
+    for (int i = mid2 + 1, j = l1 + 1; i <= r2; i++) {  // 考虑左侧对右侧贡献
+      while (j <= mid1 && md[j].pre < qr[i].l) ta.c(md[j].pos, md[j].va), j++;
+      qr[i].ans += ta.q(qr[i].r) - ta.q(qr[i].l - 1);
     }
+    for (int i = l1 + 1; i <= mid1; i++) ta.d(md[i].pos);
+  }
 }
-namespace colist
-{
-    struct data {int l;int r;int x;friend bool operator <(data a,data b){return a.r<b.r;}};set <data> s;
-    struct nod {int l;int r;friend bool operator <(nod a,nod b){return a.r<b.r;}};set <nod> c[2*N];set <int> bd;
-    inline void split(int mid)//将一个节点拆成两个节点
-    {
-        SDI it=s.lower_bound((data){0,mid,0});data p=*it;if(mid==p.r)return;
-        s.erase(p);s.insert((data){p.l,mid,p.x});s.insert((data){mid+1,p.r,p.x});
-        c[p.x].erase((nod){p.l,p.r});c[p.x].insert((nod){p.l,mid});c[p.x].insert((nod){mid+1,p.r});
-    }
-    inline void del(set <data> :: iterator it)//删除一个迭代器
-    {
-        bd.insert(it->l);SNI it1,it2;it1=it2=c[it->x].find((nod){it->l,it->r});
-        ++it2;if(it2!=c[it->x].end())bd.insert(it2->l);c[it->x].erase(it1);s.erase(it);
-    }
-    inline void ins(data p)//插入一个节点
-    {
-        s.insert(p);SNI it=c[p.x].insert((nod){p.l,p.r}).first;++it;
-        if(it!=c[p.x].end()){bd.insert(it->l);}
-    }
-    inline void stv(int l,int r,int x)//区间赋值
-    {
-        if(l!=1)split(l-1);split(r);int p=l;//split两下之后删掉所有区间
-        while(p!=r+1){SDI it=s.lower_bound((data){0,p,0});p=it->r+1;del(it);}
-        ins((data){l,r,x});//扫一遍set处理所有变化的pre值
-        for(set <int> :: iterator it=bd.begin();it!=bd.end();++it)
-        {
-            SDI it1=s.lower_bound((data){0,*it,0});
-            if(*it!=it1->l)modify(*it,*it-1);
-            else
-            {
-                SNI it2=c[it1->x].lower_bound((nod){0,*it});
-                if(it2!=c[it1->x].begin())--it2,modify(*it,it2->r);else modify(*it,0);
-            }
-        }bd.clear();
-    }
-    inline void ih()
-    {
-        int nc=a[1];int ccnt=1;//将连续的一段插入到set中
-        for(int i=2;i<=n;i++)
-            if(nc!=a[i]){s.insert((data){i-ccnt,i-1,nc}),c[nc].insert((nod){i-ccnt,i-1});nc=a[i];ccnt=1;}
-            else {ccnt++;} s.insert((data){n-ccnt+1,n,a[n]}),c[a[n]].insert((nod){n-ccnt+1,n});
-    }
+inline void mainsolve() {
+  colist::ih();
+  for (int i = 1; i <= m; i++)
+    if (tp[i] == 1)
+      colist::stv(lf[i], rt[i], co[i]);
+    else
+      qr[++tp2] = (qry){++cnt, lf[i], rt[i], 0};
+  sort(qr + 1, qr + tp2 + 1);
+  for (int i = 1; i <= n; i++) srt[i] = i;
+  sort(srt + 1, srt + n + 1, cmp1);
+  for (int i = 1, j = 1; i <= tp2; i++) {  // 初始化一下每个询问的值
+    while (j <= n && pre[srt[j]] < qr[i].l) ta.c(srt[j], 1), j++;
+    qr[i].ans += ta.q(qr[i].r) - ta.q(qr[i].l - 1);
+  }
+  ta.clear();
+  sort(qr + 1, qr + tp2 + 1, cmp);
+  solve(0, tp1, 0, tp2, 0, cnt);
+  sort(qr + 1, qr + tp2 + 1, cmp);
+  for (int i = 1; i <= tp2; i++) printf("%d\n", qr[i].ans);
 }
-namespace cdq
-{   
-    struct treearray//树状数组
-    {
-        int ta[N];
-        inline void c(int x,int t){for(;x<=n;x+=x&(-x))ta[x]+=t;}
-        inline void d(int x){for(;x<=n;x+=x&(-x))ta[x]=0;}
-        inline int  q(int x){int r=0;for(;x;x-=x&(-x))r+=ta[x];return r;}
-        inline void clear(){for(int i=1;i<=n;i++)ta[i]=0;}
-    }ta;int srt[N];
-    inline bool cmp1(const int& a,const int& b){return pre[a]<pre[b];}
-    inline void solve(int l1,int r1,int l2,int r2,int L,int R)//cdq
-    {
-        if(l1==r1||l2==r2)return;int mid=(L+R)/2;
-        int mid1=l1;while(mid1!=r1&&md[mid1+1].t<=mid)mid1++;
-        int mid2=l2;while(mid2!=r2&&qr[mid2+1].t<=mid)mid2++;
-        solve(l1,mid1,l2,mid2,L,mid);solve(mid1,r1,mid2,r2,mid,R);
-        if(l1!=mid1&&mid2!=r2)
-        {
-            sort(md+l1+1,md+mid1+1);sort(qr+mid2+1,qr+r2+1);
-            for(int i=mid2+1,j=l1+1;i<=r2;i++)//考虑左侧对右侧贡献
-            {
-                while(j<=mid1&&md[j].pre<qr[i].l)ta.c(md[j].pos,md[j].va),j++;
-                qr[i].ans+=ta.q(qr[i].r)-ta.q(qr[i].l-1);
-            }for(int i=l1+1;i<=mid1;i++)ta.d(md[i].pos);
-        }
-    }
-    inline void mainsolve()
-    {
-        colist::ih();for(int i=1;i<=m;i++)
-            if(tp[i]==1)colist::stv(lf[i],rt[i],co[i]);else qr[++tp2]=(qry){++cnt,lf[i],rt[i],0};
-        sort(qr+1,qr+tp2+1);for(int i=1;i<=n;i++)srt[i]=i;sort(srt+1,srt+n+1,cmp1);
-        for(int i=1,j=1;i<=tp2;i++)//初始化一下每个询问的值
-        {
-            while(j<=n&&pre[srt[j]]<qr[i].l)ta.c(srt[j],1),j++;
-            qr[i].ans+=ta.q(qr[i].r)-ta.q(qr[i].l-1);
-        }ta.clear();sort(qr+1,qr+tp2+1,cmp);solve(0,tp1,0,tp2,0,cnt);sort(qr+1,qr+tp2+1,cmp);
-        for(int i=1;i<=tp2;i++)printf("%d\n",qr[i].ans);
-    }
-}
-int main(){prew::prew();cdq::mainsolve();return 0;}//拜拜程序~
+}  // namespace cdq
+int main() {
+  prew::prew();
+  cdq::mainsolve();
+  return 0;
+}  // 拜拜程序~
 ```
 
 ### [HNOI2010]城市建设
@@ -572,113 +671,220 @@ int main(){prew::prew();cdq::mainsolve();return 0;}//拜拜程序~
 
 所以我们就证明了每次我们用来跑 kruskal 的图都是 $O(len)$ 级别的了
 
-从而每一层的时间复杂度都是 $(nlogn)$ 了
+从而每一层的时间复杂度都是 $O(n\log n)$ 了
 
-因此我们的时间复杂度就是 $T(n)=T(\lfloor \frac{n}{2} \rfloor)+T(\lceil \frac{n}{2} \rceil)+ O(nlogn)=O(nlog^2n)$ 了
+因此我们的时间复杂度就是 $T(n)=T(\lfloor \frac{n}{2} \rfloor)+T(\lceil \frac{n}{2} \rceil)+ O(n\log n)=O(n\log^2n)$ 了
 
 代码实现上可能会有一些难度，需要注意的是并查集不能使用路径压缩，否则就不支持回退操作了，执行缩点操作的时候也没有必要真的执行，而是每一层的 kruskal 都在上一层的并查集里直接做就可以了
 
-```C
-#include<cstdio>
-#include<algorithm>
-#include<vector>
-#include<stack>
+```cpp
+#include <algorithm>
+#include <cstdio>
+#include <stack>
+#include <vector>
 using namespace std;
 typedef long long ll;
-int n;int m;int ask;
-struct bcj
-{
-    int fa[20010];int size[20010];
-    struct opt{int u;int v;};stack <opt> st;
-    inline void ih(){for(int i=1;i<=n;i++)fa[i]=i,size[i]=1;}
-    inline int f(int x){return (fa[x]==x)?x:f(fa[x]);}
-    inline void u(int x,int y)//带撤回
-    {
-        int u=f(x);int v=f(y);if(u==v)return;if(size[u]<size[v])swap(u,v);
-        size[u]+=size[v];fa[v]=u;opt o;o.u=u;o.v=v;st.push(o);   
+int n;
+int m;
+int ask;
+struct bcj {
+  int fa[20010];
+  int size[20010];
+  struct opt {
+    int u;
+    int v;
+  };
+  stack<opt> st;
+  inline void ih() {
+    for (int i = 1; i <= n; i++) fa[i] = i, size[i] = 1;
+  }
+  inline int f(int x) { return (fa[x] == x) ? x : f(fa[x]); }
+  inline void u(int x, int y) {  // 带撤回
+    int u = f(x);
+    int v = f(y);
+    if (u == v) return;
+    if (size[u] < size[v]) swap(u, v);
+    size[u] += size[v];
+    fa[v] = u;
+    opt o;
+    o.u = u;
+    o.v = v;
+    st.push(o);
+  }
+  inline void undo() {
+    opt o = st.top();
+    st.pop();
+    fa[o.v] = o.v;
+    size[o.u] -= size[o.v];
+  }
+  inline void clear(int tim) {
+    while (st.size() > tim) {
+      undo();
     }
-    inline void undo(){opt o=st.top();st.pop();fa[o.v]=o.v;size[o.u]-=size[o.v];}
-    inline void clear(int tim){while(st.size()>tim){undo();}}
-}s,s1;
-struct edge//静态边
+  }
+} s, s1;
+struct edge  // 静态边
 {
-    int u;int v;ll val;int mrk;
-    friend bool operator <(edge a,edge b){return a.val<b.val;}
-}e[50010];
-struct moved{int u;int v;};//动态边
-struct query{int num;ll val;ll ans;}q[50010];bool book[50010];//询问
-vector <edge> ve[30];vector <moved> vq;vector <edge> tr;ll res[30];int tim[30];
-inline void pushdown(int dep)//缩边
+  int u;
+  int v;
+  ll val;
+  int mrk;
+  friend bool operator<(edge a, edge b) { return a.val < b.val; }
+} e[50010];
+struct moved {
+  int u;
+  int v;
+};  // 动态边
+struct query {
+  int num;
+  ll val;
+  ll ans;
+} q[50010];
+bool book[50010];  // 询问
+vector<edge> ve[30];
+vector<moved> vq;
+vector<edge> tr;
+ll res[30];
+int tim[30];
+inline void pushdown(int dep)  // 缩边
 {
-    tr.clear();//这里要复制一份，以免无法回撤操作
-    for(int i=0;i<ve[dep].size();i++){tr.push_back(ve[dep][i]);}
-    sort(tr.begin(),tr.end());
-    for(int i=0;i<tr.size();i++)//无用边
-    {
-        if(s1.f(tr[i].u)==s1.f(tr[i].v)){tr[i].mrk=-1;continue;}s1.u(tr[i].u,tr[i].v);
-    }s1.clear(0);res[dep+1]=res[dep];
-    for(int i=0;i<vq.size();i++){s1.u(vq[i].u,vq[i].v);}vq.clear();
-    for(int i=0;i<tr.size();i++)//必须边
-    {
-        if(tr[i].mrk==-1||s1.f(tr[i].u)==s1.f(tr[i].v))continue;tr[i].mrk=1;
-        s1.u(tr[i].u,tr[i].v);s.u(tr[i].u,tr[i].v);res[dep+1]+=tr[i].val;
-    }s1.clear(0);ve[dep+1].clear();
-    for(int i=0;i<tr.size();i++)//缩边
-    {
-        if(tr[i].mrk!=0)continue;
-        edge p;p.u=s.f(tr[i].u);p.v=s.f(tr[i].v);if(p.u==p.v)continue;
-        p.val=tr[i].val;p.mrk=0;ve[dep+1].push_back(p);
-    }return;
+  tr.clear();  // 这里要复制一份，以免无法回撤操作
+  for (int i = 0; i < ve[dep].size(); i++) {
+    tr.push_back(ve[dep][i]);
+  }
+  sort(tr.begin(), tr.end());
+  for (int i = 0; i < tr.size(); i++) {  // 无用边
+    if (s1.f(tr[i].u) == s1.f(tr[i].v)) {
+      tr[i].mrk = -1;
+      continue;
+    }
+    s1.u(tr[i].u, tr[i].v);
+  }
+  s1.clear(0);
+  res[dep + 1] = res[dep];
+  for (int i = 0; i < vq.size(); i++) {
+    s1.u(vq[i].u, vq[i].v);
+  }
+  vq.clear();
+  for (int i = 0; i < tr.size(); i++) {  // 必须边
+    if (tr[i].mrk == -1 || s1.f(tr[i].u) == s1.f(tr[i].v)) continue;
+    tr[i].mrk = 1;
+    s1.u(tr[i].u, tr[i].v);
+    s.u(tr[i].u, tr[i].v);
+    res[dep + 1] += tr[i].val;
+  }
+  s1.clear(0);
+  ve[dep + 1].clear();
+  for (int i = 0; i < tr.size(); i++) {  // 缩边
+    if (tr[i].mrk != 0) continue;
+    edge p;
+    p.u = s.f(tr[i].u);
+    p.v = s.f(tr[i].v);
+    if (p.u == p.v) continue;
+    p.val = tr[i].val;
+    p.mrk = 0;
+    ve[dep + 1].push_back(p);
+  }
+  return;
 }
-inline void solve(int l,int r,int dep)
-{
-    tim[dep]=s.st.size();int mid=(l+r)/2;
-    if(r-l==1)//终止条件
-    {
-        edge p;p.u=s.f(e[q[r].num].u);p.v=s.f(e[q[r].num].v);p.val=q[r].val;
-        e[q[r].num].val=q[r].val;p.mrk=0;ve[dep].push_back(p);pushdown(dep);
-        q[r].ans=res[dep+1];s.clear(tim[dep-1]);return;
-    }
-    for(int i=l+1;i<=mid;i++){book[q[i].num]=true;}
-    for(int i=mid+1;i<=r;i++)//动转静
-    {
-        if(book[q[i].num])continue;
-        edge p;p.u=s.f(e[q[i].num].u);p.v=s.f(e[q[i].num].v);
-        p.val=e[q[i].num].val;p.mrk=0;ve[dep].push_back(p);
-    }
-    for(int i=l+1;i<=mid;i++)//询问转动态
-    {
-        moved p;p.u=s.f(e[q[i].num].u);p.v=s.f(e[q[i].num].v);vq.push_back(p);
-    }pushdown(dep);//下面的是回撤
-    for(int i=mid+1;i<=r;i++){if(book[q[i].num])continue;ve[dep].pop_back();}
-    for(int i=l+1;i<=mid;i++){book[q[i].num]=false;}solve(l,mid,dep+1);
-    for(int i=0;i<ve[dep].size();i++){ve[dep][i].mrk=0;}
-    for(int i=mid+1;i<=r;i++){book[q[i].num]=true;}
-    for(int i=l+1;i<=mid;i++)//动转静
-    {
-        if(book[q[i].num])continue;
-        edge p;p.u=s.f(e[q[i].num].u);p.v=s.f(e[q[i].num].v);
-        p.val=e[q[i].num].val;p.mrk=0;ve[dep].push_back(p);
-    }
-    for(int i=mid+1;i<=r;i++)//询问转动
-    {
-        book[q[i].num]=false;
-        moved p;p.u=s.f(e[q[i].num].u);p.v=s.f(e[q[i].num].v);vq.push_back(p);
-    }pushdown(dep);solve(mid,r,dep+1);
-    s.clear(tim[dep-1]);return;//时间倒流至上一层
+inline void solve(int l, int r, int dep) {
+  tim[dep] = s.st.size();
+  int mid = (l + r) / 2;
+  if (r - l == 1) {  // 终止条件
+    edge p;
+    p.u = s.f(e[q[r].num].u);
+    p.v = s.f(e[q[r].num].v);
+    p.val = q[r].val;
+    e[q[r].num].val = q[r].val;
+    p.mrk = 0;
+    ve[dep].push_back(p);
+    pushdown(dep);
+    q[r].ans = res[dep + 1];
+    s.clear(tim[dep - 1]);
+    return;
+  }
+  for (int i = l + 1; i <= mid; i++) {
+    book[q[i].num] = true;
+  }
+  for (int i = mid + 1; i <= r; i++) {  // 动转静
+    if (book[q[i].num]) continue;
+    edge p;
+    p.u = s.f(e[q[i].num].u);
+    p.v = s.f(e[q[i].num].v);
+    p.val = e[q[i].num].val;
+    p.mrk = 0;
+    ve[dep].push_back(p);
+  }
+  for (int i = l + 1; i <= mid; i++) {  // 询问转动态
+    moved p;
+    p.u = s.f(e[q[i].num].u);
+    p.v = s.f(e[q[i].num].v);
+    vq.push_back(p);
+  }
+  pushdown(dep);  // 下面的是回撤
+  for (int i = mid + 1; i <= r; i++) {
+    if (book[q[i].num]) continue;
+    ve[dep].pop_back();
+  }
+  for (int i = l + 1; i <= mid; i++) {
+    book[q[i].num] = false;
+  }
+  solve(l, mid, dep + 1);
+  for (int i = 0; i < ve[dep].size(); i++) {
+    ve[dep][i].mrk = 0;
+  }
+  for (int i = mid + 1; i <= r; i++) {
+    book[q[i].num] = true;
+  }
+  for (int i = l + 1; i <= mid; i++) {  // 动转静
+    if (book[q[i].num]) continue;
+    edge p;
+    p.u = s.f(e[q[i].num].u);
+    p.v = s.f(e[q[i].num].v);
+    p.val = e[q[i].num].val;
+    p.mrk = 0;
+    ve[dep].push_back(p);
+  }
+  for (int i = mid + 1; i <= r; i++) {  // 询问转动
+    book[q[i].num] = false;
+    moved p;
+    p.u = s.f(e[q[i].num].u);
+    p.v = s.f(e[q[i].num].v);
+    vq.push_back(p);
+  }
+  pushdown(dep);
+  solve(mid, r, dep + 1);
+  s.clear(tim[dep - 1]);
+  return;  // 时间倒流至上一层
 }
-int main()
-{
-    scanf("%d%d%d",&n,&m,&ask);s.ih();s1.ih();
-    for(int i=1;i<=m;i++){scanf("%d%d%lld",&e[i].u,&e[i].v,&e[i].val);}
-    for(int i=1;i<=ask;i++){scanf("%d%lld",&q[i].num,&q[i].val);}
-    for(int i=1;i<=ask;i++)//初始动态边
-    {
-        book[q[i].num]=true;moved p;p.u=e[q[i].num].u;
-        p.v=e[q[i].num].v;vq.push_back(p);
-    }
-    for(int i=1;i<=m;i++){if(book[i])continue;ve[1].push_back(e[i]);}//初始静态
-    for(int i=1;i<=ask;i++){book[q[i].num]=false;}solve(0,ask,1);
-    for(int i=1;i<=ask;i++){printf("%lld\n",q[i].ans);}return 0;//拜拜程序~
+int main() {
+  scanf("%d%d%d", &n, &m, &ask);
+  s.ih();
+  s1.ih();
+  for (int i = 1; i <= m; i++) {
+    scanf("%d%d%lld", &e[i].u, &e[i].v, &e[i].val);
+  }
+  for (int i = 1; i <= ask; i++) {
+    scanf("%d%lld", &q[i].num, &q[i].val);
+  }
+  for (int i = 1; i <= ask; i++) {  // 初始动态边
+    book[q[i].num] = true;
+    moved p;
+    p.u = e[q[i].num].u;
+    p.v = e[q[i].num].v;
+    vq.push_back(p);
+  }
+  for (int i = 1; i <= m; i++) {
+    if (book[i]) continue;
+    ve[1].push_back(e[i]);
+  }  // 初始静态
+  for (int i = 1; i <= ask; i++) {
+    book[q[i].num] = false;
+  }
+  solve(0, ask, 1);
+  for (int i = 1; i <= ask; i++) {
+    printf("%lld\n", q[i].ans);
+  }
+  return 0;  // 拜拜程序~
 }
 ```

@@ -1,4 +1,4 @@
-在学习本章前请确认你已经学习了[动态规划部分简介](/dp)
+在学习本章前请确认你已经学习了 [动态规划基础](./basic.md) 
 
 树形 DP，即在树上进行的 DP。由于树固有的递归性质，树形 DP 一般都是递归进行的。
 
@@ -6,7 +6,7 @@
 
 以下面这道题为例，介绍一下树形 DP 的一般过程。
 
-??? note " 例题[洛谷 P1352 没有上司的舞会](https://www.luogu.org/problemnew/show/P1352)"
+???+note " 例题[洛谷 P1352 没有上司的舞会](https://www.luogu.com.cn/problem/P1352)"
     某大学有 $n$ 个职员，编号为 $1\text{~} N$ 。他们之间有从属关系，也就是说他们的关系就像一棵以校长为根的树，父结点就是子结点的直接上司。现在有个周年庆宴会，宴会每邀请来一个职员都会增加一定的快乐指数 $a_i$ ，但是呢，如果某个职员的上司来参加舞会了，那么这个职员就无论如何也不肯来参加舞会了。所以，请你编程计算，邀请哪些职员可以使快乐指数最大，求最大的快乐指数。
 
 我们可以定义 $f(i,0/1)$ 代表以 $i$ 为根的子树的最优解（第二维的值为 0 代表 $i$ 不参加舞会的情况，1 代表 $i$ 参加舞会的情况）。
@@ -35,8 +35,7 @@ void addedge(int u, int v) {
 }
 void calc(int k) {
   vis[k] = 1;
-  for (int i = head[k]; i; i = e[i].next)  //枚举该节点的每个子节点
-  {
+  for (int i = head[k]; i; i = e[i].next) {  // 枚举该节点的每个子节点
     if (vis[e[i].v]) continue;
     calc(e[i].v);
     f[k][1] += f[e[i].v][0];
@@ -54,8 +53,7 @@ int main() {
     addedge(k, l);
   }
   for (int i = 1; i <= n; i++)
-    if (!is_h[i])  //从根节点开始DFS
-    {
+    if (!is_h[i]) {  // 从根节点开始DFS
       calc(i);
       printf("%d", max(f[i][1], f[i][0]));
       return 0;
@@ -65,8 +63,8 @@ int main() {
 
 ## 习题
 
-[HDU 2196 Computer](http://acm.hdu.edu.cn/showproblem.php?pid=2196)
+ [HDU 2196 Computer](http://acm.hdu.edu.cn/showproblem.php?pid=2196) 
 
-[POJ 1463 Strategic game](http://poj.org/problem?id=1463)
+ [POJ 1463 Strategic game](http://poj.org/problem?id=1463) 
 
-[POJ 3585 Accumulation Degree](http://poj.org/problem?id=3585)
+ [POJ 3585 Accumulation Degree](http://poj.org/problem?id=3585) 

@@ -1,4 +1,4 @@
-本文翻译自[e-maxx Prufer Code](https://github.com/e-maxx-eng/e-maxx-eng/blob/master/src/graph/pruefer_code.md)。另外解释一下，原文的结点是从 $0$ 开始标号的，本文我按照大多数人的习惯改成了从 $1$ 标号。
+本文翻译自 [e-maxx Prufer Code](https://github.com/e-maxx-eng/e-maxx-eng/blob/master/src/graph/pruefer_code.md) 。另外解释一下，原文的结点是从 $0$ 开始标号的，本文我按照大多数人的习惯改成了从 $1$ 标号。
 
 这篇文章介绍 Prufer 序列 (Prufer code)，这是一种将带标号的树用一个唯一的整数序列表示的方法。
 
@@ -18,7 +18,7 @@ Heinz Prufer 于 1918 年发明这个序列来证明凯莱定理。
 
 Prufer 是这样建立的：每次选择一个编号最小的叶结点并删掉它，然后在序列中记录下它连接到的那个结点。重复 $n-2$ 次后就只剩下两个结点，算法结束。
 
-显然使用堆可以做到 $O(n\log_2n)$ 的复杂度
+显然使用堆可以做到 $O(n\log n)$ 的复杂度
 
 ```cpp
 // 代码摘自原文，结点是从 0 标号的
@@ -125,7 +125,7 @@ vector<int> pruefer_code() {
 
 重建树的方法是类似的。根据 Prufer 序列的性质，我们可以得到原树上每个点的度数。然后你也可以得到度数最小的叶结点编号，而这个结点一定与 Prufer 序列的第一个数连接。然后我们同时删掉这两个结点的度数。
 
-讲到这里也许你已经知道该怎么做了。每次我们选择一个度数为 $1$ 的最小的结点编号，与当前枚举到的 Prufer 序列的点连接，然后同时减掉两个点的度。到最后我们剩下两个度数为 $1$ 的点，其中一个是结点 $n$ 。就把它们建立连接。使用堆维护这个过程，在减度数的过程中如果发现度数减到 $1$ 就把这个结点添加到堆中，这样做的复杂度是 $O(n\log_2n)$ 的。
+讲到这里也许你已经知道该怎么做了。每次我们选择一个度数为 $1$ 的最小的结点编号，与当前枚举到的 Prufer 序列的点连接，然后同时减掉两个点的度。到最后我们剩下两个度数为 $1$ 的点，其中一个是结点 $n$ 。就把它们建立连接。使用堆维护这个过程，在减度数的过程中如果发现度数减到 $1$ 就把这个结点添加到堆中，这样做的复杂度是 $O(n\log n)$ 的。
 
 ```cpp
 // 原文摘代码
@@ -184,13 +184,9 @@ vector<pair<int, int>> pruefer_decode(vector<int> const& code) {
 
 通过这些过程其实可以理解，Prufer 序列与带标号无根树建立了双射关系。
 
-## Cayley 定理
+## Cayley 公式 (Cayley's formula)
 
-凯莱定理描述如下：所有群 $G$ 同构于在 $G$ 上的对称群的子群。
-
-是不是一脸懵逼不知所措
-
-还有另一种表述：完全图 $K_n$ 有 $n^{n-2}$ 棵生成树。
+完全图 $K_n$ 有 $n^{n-2}$ 棵生成树。
 
 怎么证明？方法很多，但是用 Prufer 序列证是很简单的。任意一个长度为 $n-2$ 的值域 $[1,n]$ 的整数序列都可以通过 Prufer 序列双射对应一个生成树，于是方案数就是 $n^{n-2}$ 。
 
@@ -246,7 +242,7 @@ $$
 
 ## 习题
 
--   [UVA #10843 - Anne's game](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=20&page=show_problem&problem=1784)
--   [Timus #1069 - Prufer Code](http://acm.timus.ru/problem.aspx?space=1&num=1069)
--   [Codeforces - Clues](http://codeforces.com/contest/156/problem/D)
--   [Topcoder - TheCitiesAndRoadsDivTwo](https://community.topcoder.com/stat?c=problem_statement&pm=10774&rd=14146)
+-    [UVA #10843 - Anne's game](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=20&page=show_problem&problem=1784) 
+-    [Timus #1069 - Prufer Code](http://acm.timus.ru/problem.aspx?space=1&num=1069) 
+-    [Codeforces - Clues](http://codeforces.com/contest/156/problem/D) 
+-    [Topcoder - TheCitiesAndRoadsDivTwo](https://community.topcoder.com/stat?c=problem_statement&pm=10774&rd=14146) 

@@ -2,7 +2,7 @@
 
 ## 队列
 
-队列，英文名是 queue，在 C++ STL 中有[std::queue](https://en.cppreference.com/w/cpp/container/queue)和[std::priority_queue](https://en.cppreference.com/w/cpp/container/priority_queue)。
+队列，英文名是 queue，在 C++ STL 中有 [std::queue](https://en.cppreference.com/w/cpp/container/queue) 和 [std::priority_queue](https://en.cppreference.com/w/cpp/container/priority_queue) 。
 
 先进入队列的元素一定先出队列，因此队列通常也被称为先进先出（first in first out）表，简称 FIFO 表。
 
@@ -54,9 +54,9 @@ int q[SIZE], ql = 1, qr;
 
 有人问这个东西有什么用吗？参见下面这道题。这道题顺便可以给大家一个 **双栈模拟双端队列** 的方法。
 
-### 例题
+## 例题
 
-LOJ6515 贪玩蓝月
+ [LOJ6515「雅礼集训 2018 Day10」贪玩蓝月](https://loj.ac/problem/6515) 
 
 > 一个双端队列（deque），m 个事件：
 >
@@ -72,7 +72,7 @@ LOJ6515 贪玩蓝月
 
 每个二元组是有一段存活时间的，因此对时间建立线段树，每个二元组做 log 个存活标记。因此我们要做的就是对每个询问，求其到根节点的路径上的标记的一个最优子集。显然这个可以 DP 做。 $f[S,j]$ 表示选择集合 S 中的物品余数为 j 的最大价值。（其实实现的时侯是有序的，直接 f[i,j]做）
 
-一共有 $O(m\log_2m)$ 个标记，因此这么做的话复杂度是 $O(mp\log_2m)$ 的。
+一共有 $O(m\log m)$ 个标记，因此这么做的话复杂度是 $O(mp\log m)$ 的。
 
 ### 在线算法
 
@@ -112,7 +112,7 @@ $$
 
 ### 丢一半的复杂度
 
-似乎可以用[势能分析法](https://yhx-12243.github.io/OI-transit/records/cf601E.html)证明。其实本蒟蒻有一个很仙的想法。我们考虑这个双栈结构的整体复杂度。m 个事件，我们希望尽可能增加这个结构的复杂度。
+似乎可以用 [势能分析法](https://yhx-12243.github.io/OI-transit/records/cf601E.html) 证明。其实本蒟蒻有一个很仙的想法。我们考虑这个双栈结构的整体复杂度。m 个事件，我们希望尽可能增加这个结构的复杂度。
 
 首先，如果全是插入操作的话显然是严格 $\Theta(m)$ 的，因为插入的复杂度是 $O(1)$ 的。
 

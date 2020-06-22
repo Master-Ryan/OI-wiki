@@ -4,7 +4,7 @@ author: Link-cute, Xeonacid, ouuan
 
 ## 例题
 
-[Sliding Window](http://poj.org/problem?id=2823)
+ [Sliding Window](http://poj.org/problem?id=2823) 
 
 本题大意是给出一个长度为 $n$ 的数组，编程输出每 $k$ 个连续的数中的最大值和最小值。
 
@@ -38,53 +38,73 @@ Ps. 单调队列中的 "队列" 与正常的队列有一定的区别，稍后会
 
 而由于查询区间长度是固定的，超出查询空间的值再大也不能输出，因此还需要 site 数组记录第 $i$ 个队中的数在原数组中的位置，以弹出越界的队头。
 
-??? "例题参考代码"
+例如我们构造一个单调递增的队列会如下：
 
+原序列为：
+
+```text
+1 3 -1 -3 5 3 6 7
+```
+
+因为我们始终要维护队列保证其 **递增** 的特点，所以会有如下的事情发生：
+
+| 操作                              | 队列状态        |
+| ------------------------------- | ----------- |
+| 1 入队                            |  `{1}`      |
+| 3 比 1 大，3 入队                    |  `{1 3}`    |
+| -1 比队列中所有元素小，所以清空队列 -1 入队       |  `{-1}`     |
+| -3 比队列中所有元素小，所以清空队列 -3 入队       |  `{-3}`     |
+| 5 比 -3 大，直接入队                   |  `{-3 5}`   |
+| 3 比 5 小，5 出队，3 入队               |  `{-3 3}`   |
+| -3 已经在窗体外，所以 -3 出队；6 比 3 大，6 入队 |  `{3 6}`    |
+| 7 比 6 大，7 入队                    |  `{3 6 7}`  |
+
+??? "例题参考代码"
     ```cpp
-    #include<cstdio>
-    #include<iostream>
-    #include<cstring>
-    #include<cstdlib>
+    #include <cstdio>
+    #include <cstdlib>
+    #include <cstring>
+    #include <iostream>
     #define maxn 1000100
     using namespace std;
-    int q[maxn],a[maxn];
-    int n,k;
-    void getmin(){
-        int head=0,tail=0;
-        for (int i=1;i<k;i++){
-            while (head<=tail&&a[q[tail]]>=a[i]) tail--;
-            q[++tail]=i;
-        }
-        for (int i=k;i<=n;i++){
-            while (head<=tail&&a[q[tail]]>=a[i]) tail--;
-            q[++tail]=i;
-            while (q[head]<=i-k) head++;
-            printf("%d ",a[q[head]]);
-        }
+    int q[maxn], a[maxn];
+    int n, k;
+    void getmin() {
+      int head = 0, tail = 0;
+      for (int i = 1; i < k; i++) {
+        while (head <= tail && a[q[tail]] >= a[i]) tail--;
+        q[++tail] = i;
+      }
+      for (int i = k; i <= n; i++) {
+        while (head <= tail && a[q[tail]] >= a[i]) tail--;
+        q[++tail] = i;
+        while (q[head] <= i - k) head++;
+        printf("%d ", a[q[head]]);
+      }
     }
-
-    void getmax(){
-        int head=0,tail=0;
-        for (int i=1;i<k;i++){
-            while (head<=tail&&a[q[tail]]<=a[i]) tail--;
-            q[++tail]=i;
-        }
-        for (int i=k;i<=n;i++){
-            while (head<=tail&&a[q[tail]]<=a[i]) tail--;
-            q[++tail]=i;
-            while (q[head]<=i-k) head++;
-            printf("%d ",a[q[head]]);
-        }
+    
+    void getmax() {
+      int head = 0, tail = 0;
+      for (int i = 1; i < k; i++) {
+        while (head <= tail && a[q[tail]] <= a[i]) tail--;
+        q[++tail] = i;
+      }
+      for (int i = k; i <= n; i++) {
+        while (head <= tail && a[q[tail]] <= a[i]) tail--;
+        q[++tail] = i;
+        while (q[head] <= i - k) head++;
+        printf("%d ", a[q[head]]);
+      }
     }
-
-    int main(){
-        scanf("%d%d",&n,&k);
-        for (int i=1;i<=n;i++) scanf("%d",&a[i]);
-        getmin();
-        printf("\n");
-        getmax();
-        printf("\n");
-        return 0;
+    
+    int main() {
+      scanf("%d%d", &n, &k);
+      for (int i = 1; i <= n; i++) scanf("%d", &a[i]);
+      getmin();
+      printf("\n");
+      getmax();
+      printf("\n");
+      return 0;
     }
     ```
 

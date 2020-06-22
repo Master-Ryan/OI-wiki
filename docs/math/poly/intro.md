@@ -33,7 +33,7 @@ $$
 \end{aligned}
 $$
 
-我们称 $Q(x)$ 为 $g(x)$ 除 $f(x)$ 的 **商（Quotient）** ，R(x) $为$ g(x) $除$ f(x)$ 的 **余数（Remainder）** 。
+我们称 $Q(x)$ 为 $g(x)$ 除 $f(x)$ 的 **商（Quotient）** ， $R(x)$ 为 $g(x)$ 除 $f(x)$ 的 **余数（Remainder）** 。
 亦可记作
 
 $$
@@ -45,7 +45,8 @@ $$
 对于一个多项式 $f(x)$ ，可以将其对数函数看作其与麦克劳林级数的复合：
 
 $$
-\ln{(1 - f(x))} = -\sum_{i = 1}^{+\infty} \frac{f^{i}(x)}{i} = \sum_{i = 1}^{+\infty} \frac{(-1)^{i - 1}f^{i}(x)}{i}
+\ln{(1 - f(x))} = -\sum_{i = 1}^{+\infty} \frac{f^{i}(x)}{i}\\
+\ln{(1 + f(x))} = \sum_{i = 1}^{+\infty} \frac{(-1)^{i - 1}f^{i}(x)}{i}
 $$
 
 其指数函数同样可以这样定义：
@@ -74,5 +75,5 @@ $$
 
 ## References
 
--   [ **Picks's Blog** ](https://picks.logdown.com)
--   [ **Miskcoo's Space** ](https://blog.miskcoo.com)
+-    [ **Picks's Blog** ](https://picks.logdown.com) 
+-    [ **Miskcoo's Space** ](https://blog.miskcoo.com) 

@@ -1,6 +1,6 @@
 ## 算法
 
-快速排序是[分治](/basic/divide-and-conquer)地来将一个数组排序。
+快速排序是 [分治](./divide-and-conquer.md) 地来将一个数组排序。
 
 快速排序分为三个过程：
 
@@ -22,20 +22,22 @@
 
 其实，快速排序没有指定应如何具体实现第一步，不论是选择 m 的过程还是划分的过程，都不是只有一种实现方法。
 
-注意，一般我们说的快速排序的时间复杂度是平均为 $O(n\log n)$ ，最坏是 $O(n^2)$ ，只不过实践中几乎不可能达到最坏情况。
+一般我们说的快速排序的时间复杂度是平均为 $O(n\log n)$ ，最坏是 $O(n^2)$ ，实践中几乎不可能达到最坏情况。且因为快速排序的内存访问遵循局部性原理，多数情况下快速排序的表现大幅优于堆排序等其他复杂度为 $O(n \log n)$ 的排序算法。
 
-其实，在选择 m 的过程中使用[Median of Medians](https://en.wikipedia.org/wiki/Median_of_medians)算法，就可以保证最坏时间复杂度为 $O(n\log n)$ ，但是由于其过于复杂，实践中一般不使用。
+其实，在选择 m 的过程中使用 [Median of Medians](https://en.wikipedia.org/wiki/Median_of_medians) 算法，就可以保证最坏时间复杂度为 $O(n\log n)$ ，但是由于其过于复杂，实践中一般不使用。
 
 ## 线性找第 k 大的数
 
-找第 k 大的数（K-th order statistic），最简单的方法是先排序，然后直接找到第 k 大的位置的元素。这样做的时间复杂度是 $O(n\log n)​$ ，对于这个问题来说很不划算。事实上，我们有时间复杂度 $O(n)​$ 的解法。
+找第 k 大的数（K-th order statistic），最简单的方法是先排序，然后直接找到第 k 大的位置的元素。这样做的时间复杂度是 $O(n\log n)$ ，对于这个问题来说很不划算。事实上，我们有时间复杂度 $O(n)$ 的解法。
 
-考虑快速排序的划分过程，在快速排序的“划分”结束后，数列 $A_{p} \cdots A_{r}​$ 被分成了 $A_{p} \cdots A_{q}​$ 和 $A_{q+1} \cdots A_{r}​$ ，此时可以按照左边元素的个数（ $q - p + 1​$ ）和 k 的大小关系来判断是只在左边还是只在右边递归地求解。
+考虑快速排序的划分过程，在快速排序的「划分」结束后，数列 $A_{p} \cdots A_{r}$ 被分成了 $A_{p} \cdots A_{q}$ 和 $A_{q+1} \cdots A_{r}$ ，此时可以按照左边元素的个数（ $q - p + 1$ ）和 k 的大小关系来判断是只在左边还是只在右边递归地求解。
 
 可以证明，在期望意义下，程序的时间复杂度为 $O(n)$ 。
 
 ### 参考
 
-<https://stackoverflow.com/questions/22339240/what-algorithms-are-used-in-c11-stdsort-in-different-stl-implementations>
+ <https://stackoverflow.com/questions/22339240/what-algorithms-are-used-in-c11-stdsort-in-different-stl-implementations> 
 
-<https://en.cppreference.com/w/cpp/algorithm/sort>
+ <https://en.cppreference.com/w/cpp/algorithm/sort> 
+
+ <http://irootlee.com/juicer_locality/> 

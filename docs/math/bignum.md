@@ -11,13 +11,13 @@
 ???+ note "任务"
     输入：一个形如 `a <op> b` 的表达式。
 
-    -   `a`、`b` 分别是长度不超过 $1000$ 的十进制非负整数；
-    -   `<op>` 是一个字符（`+`、`-`、`*` 或 `/`），表示运算。
+    -    `a` 、 `b` 分别是长度不超过 $1000$ 的十进制非负整数；
+    -    `<op>` 是一个字符（ `+` 、 `-` 、 `*` 或 `/` ），表示运算。
     -   整数与运算符之间由一个空格分隔。
 
     输出：运算结果。
 
-    -   对于 `+`、`-`、`*` 运算，输出一行表示结果；
+    -   对于 `+` 、 `-` 、 `*` 运算，输出一行表示结果；
     -   对于 `/` 运算，输出两行分别表示商和余数。
     -   保证结果均为非负整数。
 
@@ -32,11 +32,11 @@
 由此不难写出读入高精度数字的代码：
 
 ```cpp
-void clear(int a[LEN]) {
+void clear(int a[]) {
   for (int i = 0; i < LEN; ++i) a[i] = 0;
 }
 
-void read(int a[LEN]) {
+void read(int a[]) {
   static char s[LEN + 1];
   scanf("%s", s);
 
@@ -53,7 +53,7 @@ void read(int a[LEN]) {
 输出也按照存储的逆序输出。由于不希望输出前导零，故这里从最高位开始向下寻找第一个非零位，从此处开始输出；终止条件 `i >= 1` 而不是 `i >= 0` 是因为当整个数字等于 $0$ 时仍希望输出一个字符 `0` 。
 
 ```cpp
-void print(int a[LEN]) {
+void print(int a[]) {
   int i;
   for (i = LEN - 1; i >= 1; --i)
     if (a[i] != 0) break;
@@ -65,41 +65,40 @@ void print(int a[LEN]) {
 拼起来就是一个完整的复读机程序咯。
 
 ??? " `copycat.cpp` "
-
     ```cpp
     #include <cstdio>
     #include <cstring>
-
+    
     static const int LEN = 1004;
-
+    
     int a[LEN], b[LEN];
-
-    void clear(int a[LEN]) {
+    
+    void clear(int a[]) {
       for (int i = 0; i < LEN; ++i) a[i] = 0;
     }
-
-    void read(int a[LEN]) {
+    
+    void read(int a[]) {
       static char s[LEN + 1];
       scanf("%s", s);
-
+    
       clear(a);
-
+    
       int len = strlen(s);
       for (int i = 0; i < len; ++i) a[len - i - 1] = s[i] - '0';
     }
-
-    void print(int a[LEN]) {
+    
+    void print(int a[]) {
       int i;
       for (i = LEN - 1; i >= 1; --i)
         if (a[i] != 0) break;
       for (; i >= 0; --i) putchar(a[i] + '0');
       putchar('\n');
     }
-
+    
     int main() {
       read(a);
       print(a);
-
+    
       return 0;
     }
     ```
@@ -119,7 +118,7 @@ void print(int a[LEN]) {
 也就是从最低位开始，将两个加数对应位置上的数码相加，并判断是否达到或超过 $10$ 。如果达到，那么处理进位：将更高一位的结果上增加 $1$ ，当前位的结果减少 $10$ 。
 
 ```cpp
-void add(int a[LEN], int b[LEN], int c[LEN]) {
+void add(int a[], int b[], int c[]) {
   clear(c);
 
   // 高精度实现中，一般令数组的最大长度 LEN 比可能的输入大一些
@@ -140,40 +139,39 @@ void add(int a[LEN], int b[LEN], int c[LEN]) {
 试着和上一部分结合，可以得到一个加法计算器。
 
 ??? " `adder.cpp` "
-
     ```cpp
     #include <cstdio>
     #include <cstring>
-
+    
     static const int LEN = 1004;
-
+    
     int a[LEN], b[LEN], c[LEN];
-
-    void clear(int a[LEN]) {
+    
+    void clear(int a[]) {
       for (int i = 0; i < LEN; ++i) a[i] = 0;
     }
-
-    void read(int a[LEN]) {
+    
+    void read(int a[]) {
       static char s[LEN + 1];
       scanf("%s", s);
-
+    
       clear(a);
-
+    
       int len = strlen(s);
       for (int i = 0; i < len; ++i) a[len - i - 1] = s[i] - '0';
     }
-
-    void print(int a[LEN]) {
+    
+    void print(int a[]) {
       int i;
       for (i = LEN - 1; i >= 1; --i)
         if (a[i] != 0) break;
       for (; i >= 0; --i) putchar(a[i] + '0');
       putchar('\n');
     }
-
-    void add(int a[LEN], int b[LEN], int c[LEN]) {
+    
+    void add(int a[], int b[], int c[]) {
       clear(c);
-
+    
       for (int i = 0; i < LEN - 1; ++i) {
         c[i] += a[i] + b[i];
         if (c[i] >= 10) {
@@ -182,14 +180,14 @@ void add(int a[LEN], int b[LEN], int c[LEN]) {
         }
       }
     }
-
+    
     int main() {
       read(a);
       read(b);
-
+    
       add(a, b, c);
       print(c);
-
+    
       return 0;
     }
     ```
@@ -203,7 +201,7 @@ void add(int a[LEN], int b[LEN], int c[LEN]) {
 从个位起逐位相减，遇到负的情况则向上一位借 $1$ 。整体思路与加法完全一致。
 
 ```cpp
-void sub(int a[LEN], int b[LEN], int c[LEN]) {
+void sub(int a[], int b[], int c[]) {
   clear(c);
 
   for (int i = 0; i < LEN - 1; ++i) {
@@ -221,68 +219,66 @@ void sub(int a[LEN], int b[LEN], int c[LEN]) {
 将上一个程序中的 `add()` 替换成 `sub()` ，就有了一个减法计算器。
 
 ??? " `subtractor.cpp` "
-
     ```cpp
     #include <cstdio>
     #include <cstring>
-
+    
     static const int LEN = 1004;
-
+    
     int a[LEN], b[LEN], c[LEN];
-
-    void clear(int a[LEN])
-    {
-        for (int i = 0; i < LEN; ++i) a[i] = 0;
+    
+    void clear(int a[]) {
+      for (int i = 0; i < LEN; ++i) a[i] = 0;
     }
-
-    void read(int a[LEN])
-    {
-        static char s[LEN + 1];
-        scanf("%s", s);
-
-        clear(a);
-
-        int len = strlen(s);
-        for (int i = 0; i < len; ++i)
-            a[len - i - 1] = s[i] - '0';
+    
+    void read(int a[]) {
+      static char s[LEN + 1];
+      scanf("%s", s);
+    
+      clear(a);
+    
+      int len = strlen(s);
+      for (int i = 0; i < len; ++i) a[len - i - 1] = s[i] - '0';
     }
-
-    void print(int a[LEN])
-    {
-        int i;
-        for (i = LEN - 1; i >= 1; --i) if (a[i] != 0) break;
-        for (; i >= 0; --i) putchar(a[i] + '0');
-        putchar('\n');
+    
+    void print(int a[]) {
+      int i;
+      for (i = LEN - 1; i >= 1; --i)
+        if (a[i] != 0) break;
+      for (; i >= 0; --i) putchar(a[i] + '0');
+      putchar('\n');
     }
-
-    void sub(int a[LEN], int b[LEN], int c[LEN])
-    {
-        clear(c);
-
-        for (int i = 0; i < LEN - 1; ++i) {
-            c[i] += a[i] - b[i];
-            if (c[i] < 0) {
-                c[i + 1] -= 1;
-                c[i] += 10;
-            }
+    
+    void sub(int a[], int b[], int c[]) {
+      clear(c);
+    
+      for (int i = 0; i < LEN - 1; ++i) {
+        c[i] += a[i] - b[i];
+        if (c[i] < 0) {
+          c[i + 1] -= 1;
+          c[i] += 10;
         }
+      }
     }
-
-    int main()
-    {
-        read(a);
-        read(b);
-
-        sub(a, b, c);
-        print(c);
-
-        return 0;
+    
+    int main() {
+      read(a);
+      read(b);
+    
+      sub(a, b, c);
+      print(c);
+    
+      return 0;
     }
     ```
 
 试一试，输入 `1 2` ——输出 `/9999999` ，诶这个 OI Wiki 怎么给了我一份假的代码啊……
 
-如你所见，上面的程序只能处理 $a \geq b$ 的情况，至于负数如何处理——就交给聪明的你啦。
+事实上，上面的代码只能处理减数 $a$ 大于等于被减数 $b$ 的情况。处理被减数比减数小，即 $a<b$ 时的情况很简单。
+
+ $a-b=-(b-a)$ 
+
+要计算 $b-a$ 的值，因为有 $b>a$ ，可以调用以上代码中的 `sub` 函数，写法为 `sub(b,a,c)` 。要得到 $a-b$ 的值，在得数前加上负号即可。
 
 ### 乘法
 
@@ -301,7 +297,7 @@ void sub(int a[LEN], int b[LEN], int c[LEN]) {
 当然，也是出于这个原因，这个方法需要特别关注乘数 $b$ 的范围。若它和 $10^9$ （或相应整型的取值上界）属于同一数量级，那么需要慎用高精度—单精度乘法。
 
 ```cpp
-void mul_short(int a[LEN], int b, int c[LEN]) {
+void mul_short(int a[], int b, int c[]) {
   clear(c);
 
   for (int i = 0; i < LEN - 1; ++i) {
@@ -332,7 +328,7 @@ void mul_short(int a[LEN], int b, int c[LEN]) {
 注意这个过程与竖式乘法不尽相同，我们的算法在每一步乘的过程中并不进位，而是将所有的结果保留在对应的位置上，到最后再统一处理进位，但这不会影响结果。
 
 ```cpp
-void mul(int a[LEN], int b[LEN], int c[LEN]) {
+void mul(int a[], int b[], int c[]) {
   clear(c);
 
   for (int i = 0; i < LEN - 1; ++i) {
@@ -364,7 +360,7 @@ void mul(int a[LEN], int b[LEN], int c[LEN]) {
 ```cpp
 // 被除数 a 以下标 last_dg 为最低位，是否可以再减去除数 b 而保持非负
 // len 是除数 b 的长度，避免反复计算
-inline bool greater_eq(int a[LEN], int b[LEN], int last_dg, int len) {
+inline bool greater_eq(int a[], int b[], int last_dg, int len) {
   // 有可能被除数剩余的部分比除数长，这个情况下最多多出 1 位，故如此判断即可
   if (a[last_dg + len] != 0) return true;
   // 从高位到低位，逐位比较
@@ -376,7 +372,7 @@ inline bool greater_eq(int a[LEN], int b[LEN], int last_dg, int len) {
   return true;
 }
 
-void div(int a[LEN], int b[LEN], int c[LEN], int d[LEN]) {
+void div(int a[], int b[], int c[], int d[]) {
   clear(c);
   clear(d);
 
@@ -418,40 +414,39 @@ void div(int a[LEN], int b[LEN], int c[LEN], int d[LEN]) {
 将上面介绍的四则运算的实现结合，即可完成开头提到的计算器程序。
 
 ??? " `calculator.cpp` "
-
     ```cpp
     #include <cstdio>
     #include <cstring>
-
+    
     static const int LEN = 1004;
-
+    
     int a[LEN], b[LEN], c[LEN], d[LEN];
-
-    void clear(int a[LEN]) {
+    
+    void clear(int a[]) {
       for (int i = 0; i < LEN; ++i) a[i] = 0;
     }
-
-    void read(int a[LEN]) {
+    
+    void read(int a[]) {
       static char s[LEN + 1];
       scanf("%s", s);
-
+    
       clear(a);
-
+    
       int len = strlen(s);
       for (int i = 0; i < len; ++i) a[len - i - 1] = s[i] - '0';
     }
-
-    void print(int a[LEN]) {
+    
+    void print(int a[]) {
       int i;
       for (i = LEN - 1; i >= 1; --i)
         if (a[i] != 0) break;
       for (; i >= 0; --i) putchar(a[i] + '0');
       putchar('\n');
     }
-
-    void add(int a[LEN], int b[LEN], int c[LEN]) {
+    
+    void add(int a[], int b[], int c[]) {
       clear(c);
-
+    
       for (int i = 0; i < LEN - 1; ++i) {
         c[i] += a[i] + b[i];
         if (c[i] >= 10) {
@@ -460,10 +455,10 @@ void div(int a[LEN], int b[LEN], int c[LEN], int d[LEN]) {
         }
       }
     }
-
-    void sub(int a[LEN], int b[LEN], int c[LEN]) {
+    
+    void sub(int a[], int b[], int c[]) {
       clear(c);
-
+    
       for (int i = 0; i < LEN - 1; ++i) {
         c[i] += a[i] - b[i];
         if (c[i] < 0) {
@@ -472,21 +467,21 @@ void div(int a[LEN], int b[LEN], int c[LEN], int d[LEN]) {
         }
       }
     }
-
-    void mul(int a[LEN], int b[LEN], int c[LEN]) {
+    
+    void mul(int a[], int b[], int c[]) {
       clear(c);
-
+    
       for (int i = 0; i < LEN - 1; ++i) {
         for (int j = 0; j <= i; ++j) c[i] += a[j] * b[i - j];
-
+    
         if (c[i] >= 10) {
           c[i + 1] += c[i] / 10;
           c[i] %= 10;
         }
       }
     }
-
-    inline bool greater_eq(int a[LEN], int b[LEN], int last_dg, int len) {
+    
+    inline bool greater_eq(int a[], int b[], int last_dg, int len) {
       if (a[last_dg + len] != 0) return true;
       for (int i = len - 1; i >= 0; --i) {
         if (a[last_dg + i] > b[i]) return true;
@@ -494,11 +489,11 @@ void div(int a[LEN], int b[LEN], int c[LEN], int d[LEN]) {
       }
       return true;
     }
-
-    void div(int a[LEN], int b[LEN], int c[LEN], int d[LEN]) {
+    
+    void div(int a[], int b[], int c[], int d[]) {
       clear(c);
       clear(d);
-
+    
       int la, lb;
       for (la = LEN - 1; la > 0; --la)
         if (a[la - 1] != 0) break;
@@ -508,7 +503,7 @@ void div(int a[LEN], int b[LEN], int c[LEN], int d[LEN]) {
         puts("> <");
         return;
       }
-
+    
       for (int i = 0; i < la; ++i) d[i] = a[i];
       for (int i = la - lb; i >= 0; --i) {
         while (greater_eq(d, b, i, lb)) {
@@ -523,15 +518,15 @@ void div(int a[LEN], int b[LEN], int c[LEN], int d[LEN]) {
         }
       }
     }
-
+    
     int main() {
       read(a);
-
+    
       char op[4];
       scanf("%s", op);
-
+    
       read(b);
-
+    
       switch (op[0]) {
         case '+':
           add(a, b, c);
@@ -553,7 +548,7 @@ void div(int a[LEN], int b[LEN], int c[LEN], int d[LEN]) {
         default:
           puts("> <");
       }
-
+    
       return 0;
     }
     ```
@@ -595,75 +590,70 @@ $$
 整个过程可以递归实现。为清晰起见，下面的代码通过 Karatsuba 算法实现了多项式乘法，最后再处理所有的进位问题。
 
 ??? "karatsuba_mulc.cpp"
-
     ```cpp
-    int *karatsuba_polymul(int n, int *a, int *b)
-    {
-        if (n <= 32) {
-            // 规模较小时直接计算，避免继续递归带来的效率损失
-            int *r = new int[n * 2 + 1]();
-            for (int i = 0; i <= n; ++i)
-                for (int j = 0; j <= n; ++j)
-                    r[i + j] += a[i] * b[j];
-            return r;
-        }
-
-        int m = n / 2 + 1;
-        int *r = new int[m * 4 + 1]();
-        int *z0, *z1, *z2;
-
-        z0 = karatsuba_polymul(m - 1, a, b);
-        z2 = karatsuba_polymul(n - m, a + m, b + m);
-
-        // 计算 z1
-        // 临时更改，计算完毕后恢复
-        for (int i = 0; i + m <= n; ++i) a[i] += a[i + m];
-        for (int i = 0; i + m <= n; ++i) b[i] += b[i + m];
-        z1 = karatsuba_polymul(m - 1, a, b);
-        for (int i = 0; i + m <= n; ++i) a[i] -= a[i + m];
-        for (int i = 0; i + m <= n; ++i) b[i] -= b[i + m];
-        for (int i = 0; i <= (m - 1) * 2; ++i) z1[i] -= z0[i];
-        for (int i = 0; i <= (n - m) * 2; ++i) z1[i] -= z2[i];
-
-        // 由 z0、z1、z2 组合获得结果
-        for (int i = 0; i <= (m - 1) * 2; ++i) r[i] += z0[i];
-        for (int i = 0; i <= (m - 1) * 2; ++i) r[i + m] += z1[i];
-        for (int i = 0; i <= (n - m) * 2; ++i) r[i + m * 2] += z2[i];
-
-        delete[] z0;
-        delete[] z1;
-        delete[] z2;
+    int *karatsuba_polymul(int n, int *a, int *b) {
+      if (n <= 32) {
+        // 规模较小时直接计算，避免继续递归带来的效率损失
+        int *r = new int[n * 2 + 1]();
+        for (int i = 0; i <= n; ++i)
+          for (int j = 0; j <= n; ++j) r[i + j] += a[i] * b[j];
         return r;
+      }
+    
+      int m = n / 2 + 1;
+      int *r = new int[m * 4 + 1]();
+      int *z0, *z1, *z2;
+    
+      z0 = karatsuba_polymul(m - 1, a, b);
+      z2 = karatsuba_polymul(n - m, a + m, b + m);
+    
+      // 计算 z1
+      // 临时更改，计算完毕后恢复
+      for (int i = 0; i + m <= n; ++i) a[i] += a[i + m];
+      for (int i = 0; i + m <= n; ++i) b[i] += b[i + m];
+      z1 = karatsuba_polymul(m - 1, a, b);
+      for (int i = 0; i + m <= n; ++i) a[i] -= a[i + m];
+      for (int i = 0; i + m <= n; ++i) b[i] -= b[i + m];
+      for (int i = 0; i <= (m - 1) * 2; ++i) z1[i] -= z0[i];
+      for (int i = 0; i <= (n - m) * 2; ++i) z1[i] -= z2[i];
+    
+      // 由 z0、z1、z2 组合获得结果
+      for (int i = 0; i <= (m - 1) * 2; ++i) r[i] += z0[i];
+      for (int i = 0; i <= (m - 1) * 2; ++i) r[i + m] += z1[i];
+      for (int i = 0; i <= (n - m) * 2; ++i) r[i + m * 2] += z2[i];
+    
+      delete[] z0;
+      delete[] z1;
+      delete[] z2;
+      return r;
     }
-
-    void karatsuba_mul(int a[LEN], int b[LEN], int c[LEN])
-    {
-        int *r = karatsuba_polymul(LEN - 1, a, b);
-        memcpy(c, r, sizeof(int) * LEN);
-        for (int i = 0; i < LEN - 1; ++i) if (c[i] >= 10) {
-            c[i + 1] += c[i] / 10;
-            c[i] %= 10;
+    
+    void karatsuba_mul(int a[], int b[], int c[]) {
+      int *r = karatsuba_polymul(LEN - 1, a, b);
+      memcpy(c, r, sizeof(int) * LEN);
+      for (int i = 0; i < LEN - 1; ++i)
+        if (c[i] >= 10) {
+          c[i + 1] += c[i] / 10;
+          c[i] %= 10;
         }
-        delete[] r;
+      delete[] r;
     }
     ```
 
 ??? " 关于 `new` 和 `delete` "
-
-    见[内存池](/intro/common-tricks/#_4)。
+    见 [内存池](../intro/common-tricks.md#_5) 。
 
 但是这样的实现存在一个问题：在 $b$ 进制下，多项式的每一个系数都有可能达到 $n \cdot b^2$ 量级，在压位高精度实现（即 $b > 10$ ，下文介绍）中可能造成整数溢出；而若在多项式乘法的过程中处理进位问题，则 $x_1 + x_0$ 与 $y_1 + y_0$ 的结果可能达到 $2 \cdot b^m$ ，增加一个位（如果采用 $x_1 - x_0$ 的计算方式，则不得不特殊处理负数的情况）。因此，需要依照实际的应用场景来决定采用何种实现方式。
 
 ### Reference
 
-<https://en.wikipedia.org/wiki/Karatsuba_algorithm>
+ <https://en.wikipedia.org/wiki/Karatsuba_algorithm> 
 
 ## 封装类
 
-[这里](https://paste.ubuntu.com/p/7VKYzpC7dn/)有一个封装好的高精度整数类。
+ [这里](https://paste.ubuntu.com/p/7VKYzpC7dn/) 有一个封装好的高精度整数类。
 
 ??? 这里是另一个模板
-
     ```cpp
     #define MAXN 9999
     // MAXN 是一位中最大的数字
@@ -673,7 +663,7 @@ $$
     // DLEN 记录压几位
     struct Big {
       int a[MAXSIZE], len;
-      bool flag;  //标记符号'-'
+      bool flag;  // 标记符号'-'
       Big() {
         len = 1;
         memset(a, 0, sizeof a);
@@ -682,12 +672,12 @@ $$
       Big(const int);
       Big(const char*);
       Big(const Big&);
-      Big& operator=(const Big&);  //注意这里operator有&，因为赋值有修改……
-      //由于OI中要求效率
-      //此处不使用泛型函数
-      //故不重载
-      // istream& operator>>(istream&,  BigNum&);   //重载输入运算符
-      // ostream& operator<<(ostream&,  BigNum&);   //重载输出运算符
+      Big& operator=(const Big&);  // 注意这里operator有&，因为赋值有修改……
+      // 由于OI中要求效率
+      // 此处不使用泛型函数
+      // 故不重载
+      // istream& operator>>(istream&,  BigNum&);   // 重载输入运算符
+      // ostream& operator<<(ostream&,  BigNum&);   // 重载输出运算符
       Big operator+(const Big&) const;
       Big operator-(const Big&) const;
       Big operator*(const Big&)const;
@@ -695,14 +685,14 @@ $$
       // TODO: Big / Big;
       Big operator^(const int&) const;
       // TODO: Big ^ Big;
-
+    
       // TODO: Big 位运算;
-
+    
       int operator%(const int&) const;
       // TODO: Big ^ Big;
       bool operator<(const Big&) const;
       bool operator<(const int& t) const;
-      inline void print();
+      inline void print() const;
     };
     // README::不要随随便便把参数都变成引用，那样没办法传值
     Big::Big(const int b) {
@@ -835,7 +825,6 @@ $$
     }
     Big Big::operator^(const int& n) const {
       Big t(n), res(1);
-      // TODO::快速幂这样写好丑= =//DONE:)
       int y = n;
       while (y) {
         if (y & 1) res = res * t;
@@ -859,11 +848,11 @@ $$
       Big tee(t);
       return *this < tee;
     }
-    inline void Big::print() {
+    inline void Big::print() const {
       printf("%d", a[len - 1]);
       gd(i, len - 2, 0) { printf("%04d", a[i]); }
     }
-
+    
     inline void print(Big s) {
       // s不要是引用，要不然你怎么print(a * b);
       int len = s.len;
@@ -875,9 +864,9 @@ $$
 
 ## 习题
 
--   [NOIP 2012 国王游戏](https://www.luogu.org/problemnew/show/P1080)
--   [SPOJ - Fast Multiplication](http://www.spoj.com/problems/MUL/en/)
--   [SPOJ - GCD2](http://www.spoj.com/problems/GCD2/)
--   [UVA - Division](https://uva.onlinejudge.org/index.php?option=onlinejudge&page=show_problem&problem=1024)
--   [UVA - Fibonacci Freeze](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=436)
--   [Codeforces - Notepad](http://codeforces.com/contest/17/problem/D)
+-    [NOIP 2012 国王游戏](https://loj.ac/problem/2603) 
+-    [SPOJ - Fast Multiplication](http://www.spoj.com/problems/MUL/en/) 
+-    [SPOJ - GCD2](http://www.spoj.com/problems/GCD2/) 
+-    [UVA - Division](https://uva.onlinejudge.org/index.php?option=onlinejudge&page=show_problem&problem=1024) 
+-    [UVA - Fibonacci Freeze](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=436) 
+-    [Codeforces - Notepad](http://codeforces.com/contest/17/problem/D) 
